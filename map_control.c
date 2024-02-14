@@ -28,30 +28,32 @@ char **get_map(char *str, t_solong *solong)
 	if (!ret)
 		return (NULL);
 	close(a);
-	open(str,O_RDONLY);
+	a = open(str,O_RDONLY);
 	b = -1;
 	while (++b < solong->mapy)
 		ret[b] = get_next_line(a);
-	solong->mapx = ft_strlen(ret[0]);
 	ret[b] = NULL;
+	solong->mapx = ft_strlen(ret[0]);
+	solong->chrx = 0;
+	solong->chry = 0;
 	return (ret);
 }
 void map_verify_1(t_solong *map_check)
 {
-	int y_refer;
-	int x;
 	int i;
+	int a;
 
+	a = 0;
 	i = 0;
-	x = 0;
-	y_refer = map_check->mapx - 1;
-	while(y_refer > 0) // BU KISIM BAŞINI VE SONUNU KONTROL ETMEK İÇİN
+	while(map_check->mapy > i)
 	{
-		
-		x++;
-		y_refer--;
+		if(ft_strlen(map_check->map[a]) != map_check->mapx)
+			errorm(map_check,'e');
+		if(map_check->map[a][0] != '1' || map_check->map[a][map_check->mapx - 1] != '1')
+			errorm(map_check,'s');
+		a++;
+		i++;
 	}
-	
 }
 
 void map_verify(t_solong *map_check,char *ber)
@@ -67,16 +69,10 @@ void map_verify(t_solong *map_check,char *ber)
 		while(map_check->map[i][j]) // BU KISIM İÇERİDE 01PEC DIŞINDA BİR ŞEY OLMAMASI İÇİN
 		{
 			if (!ft_strchr("01PEC",map_check->map[i][j]))
-			{
-				printf("bozuk");
-				return;
-			}
+				errorm(map_check,'a');
 			if (ft_strchr("0PEC",map_check->map[0][j]) || \
 			ft_strchr("0PEC",map_check->map[map_check->mapy - 1][j]))
-			{
-				printf("bu diğer bozuk olan");
-				return ;
-			}
+				errorm(map_check,'m');
 			j++;
 		}
 		i++;

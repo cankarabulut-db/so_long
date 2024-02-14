@@ -29,6 +29,7 @@ typedef struct s_solong{
 #include "getnextline/get_next_line.h"
 
 int ft_strchr(char *str,char c);
+void errorm(t_solong *main,char x);
 
 
 

@@ -9,5 +9,9 @@ void errorm(t_solong *main,char x)
 		printf("The lines are not equal!");
 	else if(x == 's')
 		printf("Something is wrong on the wall!");
+	else if(x == 'w')
+		printf("There are too many exits or players.");
+	else if(x == 'f')
+		printf("Flood Fill Error!");
 	exit(1);
 }

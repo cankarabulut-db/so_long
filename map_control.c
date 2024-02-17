@@ -1,50 +1,31 @@
 #include "so_long.h"
 
-int countline(int fd)
+void map_verify_2(t_solong *map_check,int y,int x)
 {
-	char *str;
-	int i;
-
-	i = 0;
-	str = get_next_line(fd);
-	if (str != NULL)
+	while(map_check->map[y])
 	{
-		i++;
-		i += countline(fd);
+		x = 0;
+		while(map_check->map[y][x])
+		{
+			if(map_check->map[y][x] == 'P')
+				{
+					map_check->p_count += 1;
+					map_check->chrx = x;
+					map_check->chry = y;
+				}
+			if(map_check->map[y][x] == 'C')
+				map_check->c_count += 1;
+			if(map_check->map[y][x] == 'E')
+				map_check->e_count += 1;
+			x++;
+		}
+		y++;
 	}
-	free(str);
-	return (i);
+	if(map_check->p_count != 1 || map_check->e_count != 1)
+		errorm(map_check,'w');
 }
-
-char **get_map(char *str, t_solong *solong)
+void map_verify_1(t_solong *map_check,int a,int i)
 {
-	char **ret;
-	int a;
-	int b;
-
-	a = open(str,O_RDONLY);
-	solong->mapy = countline(a);
-	ret = malloc(sizeof(char *) * (solong->mapy + 1));
-	if (!ret)
-		return (NULL);
-	close(a);
-	a = open(str,O_RDONLY);
-	b = -1;
-	while (++b < solong->mapy)
-		ret[b] = get_next_line(a);
-	ret[b] = NULL;
-	solong->mapx = ft_strlen(ret[0]);
-	solong->chrx = 0;
-	solong->chry = 0;
-	return (ret);
-}
-void map_verify_1(t_solong *map_check)
-{
-	int i;
-	int a;
-
-	a = 0;
-	i = 0;
 	while(map_check->mapy > i)
 	{
 		if(ft_strlen(map_check->map[a]) != map_check->mapx)
@@ -54,19 +35,16 @@ void map_verify_1(t_solong *map_check)
 		a++;
 		i++;
 	}
+	map_verify_2(map_check,0,0);
 }
 
-void map_verify(t_solong *map_check,char *ber)
+void map_verify(t_solong *map_check,char *ber,int j,int i)
 {
-	int j;
-	int i;
-
 	map_check->map = get_map(ber,map_check);
-	i = 0;
-	while(map_check->map[i])
+	while (map_check->map[i])
 	{
 		j = 0;
-		while(map_check->map[i][j]) // BU KISIM İÇERİDE 01PEC DIŞINDA BİR ŞEY OLMAMASI İÇİN
+		while (map_check->map[i][j]) // BU KISIM İÇERİDE 01PEC DIŞINDA BİR ŞEY OLMAMASI İÇİN
 		{
 			if (!ft_strchr("01PEC",map_check->map[i][j]))
 				errorm(map_check,'a');
@@ -77,16 +55,5 @@ void map_verify(t_solong *map_check,char *ber)
 		}
 		i++;
 	}
-	map_verify_1(map_check);
-}
-
-
-int main()
-{
-	t_solong *solong;
-
-	solong = malloc(sizeof(t_solong));
-	if(!solong)
-		return (0);
-	map_verify(solong,"a.ber");
+	map_verify_1(map_check,0,0);
 }
